@@ -30,7 +30,7 @@ import "./assets/scss/main.scss";
 import "@/assets/css/main.css";
 
 // Vue Router
-import router from "./router";
+import router from "./router/index";
 
 // Vuex Store
 import store from "./store/store";
@@ -46,7 +46,7 @@ require("./assets/css/iconfont.css");
 require("./assets/fontawesome-icons");
 
 // OAuthentication
-require("./oauth");
+// require("./oauth");
 
 Vue.config.productionTip = false;
 

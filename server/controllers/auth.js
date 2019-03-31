@@ -1,5 +1,6 @@
 const { User, Admin, SupportTicket, TempLogin } = require("../database/models");
 const bcrypt = require("bcrypt");
+const { usersController } = require("./index");
 const { timeFromSecond } = require("../utils");
 const { google } = require("googleapis");
 const googleClient = require("../config/google.json");
@@ -17,31 +18,20 @@ const oauth2Client = new google.auth.OAuth2(
   googleConfig.redirect
 );
 
-exports.login = async (data, ip, cb) => {
+exports.login = async (req, res) => {
   // Get ip address from client request and save it to the <tempLogin> collection
-  // const ip = (
-  //   req.headers['x-forwarded-for'] ||
-  //   req.connection.remoteAddress ||
-  //   req.socket.remoteAddress ||
-  //   req.connection.socket.remoteAddress
-  // ).split(',')[0]
+  const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
   const tempLogin = await TempLogin.find({ ipAddress: ip });
   const now = new Date();
   if (tempLogin && tempLogin.length > 0) {
     if (tempLogin[0].isPanelty) {
       const passTime = now.getTime() - tempLogin[0].paneltyTime.getTime();
       if (passTime < 1000 * 60 * 15) {
-        // return res.send({ status: 300 })
-        return cb({ status: 300 });
+        return res.json({ status: 300 });
       } else {
         await TempLogin.update(
           { ipAddress: ip },
-          {
-            $set: {
-              isPanelty: false,
-              paneltyTime: null
-            }
-          }
+          { $set: { isPanelty: false, paneltyTime: null } }
         );
       }
     } else if (tempLogin[0].isLogin) {
@@ -49,7 +39,7 @@ exports.login = async (data, ip, cb) => {
     }
   }
 
-  const { userId, password } = data;
+  const { userId, password } = req.body;
 
   await User.find({ userId: userId })
     .exec()
@@ -72,7 +62,10 @@ exports.login = async (data, ip, cb) => {
                 }
               }
             ).then(() => {
-              cb({ status: 200, data: user[0] });
+              res.json({
+                status: 200,
+                data: user[0]
+              });
             });
           } else {
             new TempLogin({
@@ -83,7 +76,10 @@ exports.login = async (data, ip, cb) => {
             })
               .save()
               .then(() => {
-                cb({ status: 200, data: user[0] });
+                res.json({
+                  status: 200,
+                  data: user[0]
+                });
               });
           }
         });
@@ -102,8 +98,7 @@ exports.login = async (data, ip, cb) => {
                   }
                 }
               ).then(() => {
-                // res.send({ status: 300 })
-                cb({ status: 300 });
+                res.json({ status: 300 });
               });
             } else {
               // try again but increase attemptCount
@@ -111,11 +106,7 @@ exports.login = async (data, ip, cb) => {
                 { ipAddress: ip },
                 { $inc: { attemptCount: 1 } }
               ).then(() => {
-                // res.send({
-                //   status: 301,
-                //   attemptCount: ++tempLoginInfo[0].attemptCount
-                // })
-                cb({
+                res.json({
                   status: 301,
                   attemptCount: ++tempLoginInfo[0].attemptCount
                 });
@@ -124,14 +115,14 @@ exports.login = async (data, ip, cb) => {
           } else {
             // add new tempLogin information
             new TempLogin({ ipAddress: ip }).save().then(() => {
-              cb({ status: 301, attemptCount: 0 });
+              res.json({ status: 301, attemptCount: 0 });
             });
           }
         });
       }
     })
     .catch(err => {
-      cb({ status: 500, err: err });
+      res.status(500).json(err);
     });
 };
 

@@ -28,23 +28,58 @@
                   icon="icon icon-user"
                   icon-pack="feather"
                   label-placeholder="Username"
-                  v-model="value1"
+                  v-model="user.userId"
                   class="w-full mb-6 no-icon-border"
+                  :danger="validate.username"
+                  danger-text="Username required"
                 />
                 <vs-input
                   type="password"
                   icon="icon icon-lock"
                   icon-pack="feather"
                   label-placeholder="Password"
-                  v-model="value2"
+                  v-model="user.password"
                   class="w-full mb-4 no-icon-border"
+                  :danger="validate.password"
+                  danger-text="Password required."
                 />
                 <div class="flex flex-wrap justify-between my-5">
                   <vs-checkbox v-model="checkBox1" class="mb-3">Remember Me</vs-checkbox>
                   <router-link to="/pages/forgot-password">Forgot Password?</router-link>
                 </div>
-                <vs-button type="border" to="/pages/register">Register</vs-button>
-                <vs-button class="float-right" to="/">Login</vs-button>
+
+                <div v-if="loginFail">
+                  <vs-alert
+                    class="mb-6"
+                    color="danger"
+                    title="Danger"
+                    active="true"
+                    v-if="failType === 1"
+                  >
+                    Username or password is incorrect.
+                    <br>
+                    {{remainCount}} times remaing
+                  </vs-alert>
+                  <vs-alert
+                    class="mb-6"
+                    color="danger"
+                    title="Danger"
+                    active="true"
+                    v-if="failType === 2"
+                  >
+                    You failed 3 times.
+                    <br>You can try again after 15mins.
+                  </vs-alert>
+                  <vs-alert
+                    class="mb-6"
+                    color="danger"
+                    title="Danger"
+                    active="true"
+                    v-if="failType === 3"
+                  >This user is not activated.</vs-alert>
+                </div>
+                <vs-button type="border" to="/register">Register</vs-button>
+                <vs-button class="float-right" @click="onClickLogin">Login</vs-button>
 
                 <vs-divider position="center" class="my-8"></vs-divider>
 
@@ -78,13 +113,20 @@
 </template>
 
 <script>
+import authApi from "../../api/auth";
 import axios from "axios";
+import { saveToStorage } from "../../utils";
 export default {
   data() {
     return {
       value1: "",
       value2: "",
-      checkBox1: false
+      checkBox1: false,
+      user: {},
+      validate: {},
+      loginFail: false,
+      failType: 0,
+      remainCount: 0
     };
   },
   methods: {
@@ -103,6 +145,46 @@ export default {
           console.log(err);
         });
       // console.log("__Google auth");
+    },
+    async onClickLogin() {
+      if (!this.validateForm()) return;
+      const { status, data, attemptCount } = await authApi.login(this.user);
+      console.log(`Status: ${status}`);
+      console.log(`AttemptCount: ${attemptCount}`);
+      console.log("data");
+      console.log(data);
+      if (status === 301) {
+        this.loginFail = true;
+        this.remainCount = 3 - attemptCount;
+        this.failType = 1;
+      } else if (status === 300) {
+        this.loginFail = true;
+        this.failType = 2;
+      } else if (status === 200) {
+        if (!data.isActive) {
+          this.loginFail = true;
+          this.failType = 3;
+        } else {
+          this.$router.push({ path: "/" });
+          saveToStorage("user", {
+            name: data.name,
+            userId: data.userId,
+            profileUrl: data.profileUrl
+          });
+        }
+      }
+    },
+    validateForm() {
+      this.validate = {};
+      if (!this.user.userId || this.user.userId === "") {
+        this.validate.username = true;
+        return false;
+      }
+      if (!this.user.password || this.user.password === "") {
+        this.validate.password = true;
+        return false;
+      }
+      return true;
     }
   }
 };
