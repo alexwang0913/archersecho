@@ -33,10 +33,7 @@ const upload = multer({
 const singleUpload = upload.single("file");
 
 router.post("/", (req, res) => {
-  // console.log('File upload start...')
   singleUpload(req, res, err => {
-    // console.log('File upload end...')
-    // console.log(err)
     if (err) {
       return res.status(500).json(err);
     }

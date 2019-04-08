@@ -148,30 +148,37 @@ export default {
     },
     async onClickLogin() {
       if (!this.validateForm()) return;
-      const { status, data, attemptCount } = await authApi.login(this.user);
-      console.log(`Status: ${status}`);
-      console.log(`AttemptCount: ${attemptCount}`);
-      console.log("data");
-      console.log(data);
-      if (status === 301) {
-        this.loginFail = true;
-        this.remainCount = 3 - attemptCount;
-        this.failType = 1;
-      } else if (status === 300) {
-        this.loginFail = true;
-        this.failType = 2;
-      } else if (status === 200) {
-        if (!data.isActive) {
+      try {
+        const { status, data, attemptCount } = await authApi.login(this.user);
+
+        if (status === 301) {
           this.loginFail = true;
-          this.failType = 3;
-        } else {
-          this.$router.push({ path: "/" });
-          saveToStorage("user", {
-            name: data.name,
-            userId: data.userId,
-            profileUrl: data.profileUrl
-          });
+          this.remainCount = 3 - attemptCount;
+          this.failType = 1;
+        } else if (status === 300) {
+          this.loginFail = true;
+          this.failType = 2;
+        } else if (status === 200) {
+          if (!data.isActive) {
+            this.loginFail = true;
+            this.failType = 3;
+          } else {
+            this.$router.push({ name: "home" });
+            saveToStorage("user", {
+              name: data.name,
+              userId: data.userId,
+              profileUrl: data.profileUrl,
+              id: data._id
+            });
+            this.$store.commit("auth/SET_AUTH_STATE", true);
+          }
         }
+      } catch (err) {
+        this.$vs.notify({
+          color: "danger",
+          title: "Failed",
+          text: err.stack
+        });
       }
     },
     validateForm() {

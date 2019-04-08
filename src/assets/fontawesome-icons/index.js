@@ -7,4 +7,3 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(faGoogle);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
-console.log("Fontawesome icon import");

@@ -48,6 +48,17 @@ require("./assets/fontawesome-icons");
 // OAuthentication
 // require("./oauth");
 
+// Token Authentication from localstorage
+import { getFromStorage } from "./utils";
+const user = getFromStorage("user");
+if (user) {
+  store.commit("auth/SET_AUTH_STATE", true);
+}
+
+// VeeValidate
+import VeeValidate from "vee-validate";
+Vue.use(VeeValidate);
+
 Vue.config.productionTip = false;
 
 new Vue({

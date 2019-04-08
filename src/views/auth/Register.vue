@@ -242,10 +242,10 @@ export default {
         this.validate.confirmPassword = true;
         return false;
       }
-      if (!this.user.profileUrl || this.user.profileUrl === "") {
-        this.validate.profileImage = true;
-        return false;
-      }
+      // if (!this.user.profileUrl || this.user.profileUrl === "") {
+      //   this.validate.profileImage = true;
+      //   return false;
+      // }
       let validateRule = true;
       for (const rule of this.rules) {
         if (!rule.isAccept) {

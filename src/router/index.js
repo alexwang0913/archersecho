@@ -41,6 +41,21 @@ const router = new Router({
           path: "/page2",
           name: "page2",
           component: () => import("../views/Page2.vue")
+        },
+        {
+          path: "/archer-management",
+          name: "archer-management",
+          component: () => import("../views/archer-management/Index.vue")
+        },
+        {
+          path: "/device-management/:id",
+          name: "device-management",
+          component: () => import("../views/device-management/Index.vue")
+        },
+        {
+          path: "/device-detail/:id",
+          name: "device-detail",
+          component: () => import("../views/device-detail/Index.vue")
         }
       ],
       beforeEnter: authGuard

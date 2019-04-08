@@ -18,6 +18,9 @@ import mutations from "./mutations";
 import actions from "./actions";
 
 import moduleAuth from "./auth/moduleAuth";
+import moduleTodo from "./todo/moduleTodo.js";
+import moduleArcher from "./archer/moduleArcher.js";
+import moduleDevice from "./device/moduleDevice.js";
 
 export default new Vuex.Store({
   getters,
@@ -25,7 +28,10 @@ export default new Vuex.Store({
   state,
   actions,
   modules: {
-    auth: moduleAuth
+    auth: moduleAuth,
+    todo: moduleTodo,
+    archer: moduleArcher,
+    device: moduleDevice
   },
   strict: process.env.NODE_ENV !== "production"
 });

@@ -25,10 +25,10 @@ dotenv.load({
 // Use native ES6 Promises since mongoose's are deprecated.
 mongoose.Promise = global.Promise;
 
-// const mongoUrl =
-// 'mongodb://statusreport:statusreport123@ds133547.mlab.com:33547/statusreport'
-// const mongoUrl = 'mongodb://localhost:27017/statusReport'
-const mongoUrl = "mongodb://18.224.4.211:27017/ArchersEcho";
+//const mongoUrl =
+// "mongodb://statusreport:statusreport123@ds133547.mlab.com:33547/statusreport";
+const mongoUrl = "mongodb://localhost:27017/statusReport";
+// const mongoUrl = "mongodb://18.224.4.211:27017/ArchersEcho";
 // Connect to the database
 mongoose.connect(mongoUrl, { useNewUrlParser: true });
 
@@ -43,6 +43,7 @@ mongoose.connection.on("error", error => {
 
 app.use(function(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
