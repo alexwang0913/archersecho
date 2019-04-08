@@ -5,15 +5,15 @@ const express = require("express");
 const router = express.Router();
 const { archerController, deviceController } = require("../controllers");
 
-// const uploadPath = "/home/ubuntu/Desktop/archersecho/new_webpage/uploads";
-const uploadPath = "/root/archersecho/uploads";
+const uploadPath = "/home/ubuntu/Desktop/archersecho/new_webpage/uploads";
+// const uploadPath = "/root/archersecho/uploads";
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now());
+    cb(null, Date.now() + "-" + file.originalname);
   }
 });
 var upload = multer({ storage: storage });

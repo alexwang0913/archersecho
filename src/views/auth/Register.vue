@@ -87,7 +87,7 @@
                     danger-text="Confirm password is mot match."
                   />
                   <vs-upload
-                    action="http://localhost:3000/api/upload"
+                    action="http://archersecho.com/api/upload"
                     text="Upload profile image"
                     fileName="file"
                     @on-success="successUpload"
@@ -173,6 +173,8 @@ export default {
       }
     },
     successUpload(response) {
+      console.log("Response from Avatar Upload");
+      console.log(response);
       this.$vs.notify({
         color: "success",
         title: "Upload Success",
