@@ -5,8 +5,8 @@ const express = require("express");
 const router = express.Router();
 const { archerController, deviceController } = require("../controllers");
 
-const uploadPath = "/home/ubuntu/Desktop/archersecho/new_webpage/uploads";
-// const uploadPath = "/root/archersecho/uploads";
+// const uploadPath = "/home/ubuntu/Desktop/archersecho/new_webpage/uploads";
+const uploadPath = "/root/archersecho/uploads";
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
