@@ -27,7 +27,7 @@ mongoose.Promise = global.Promise;
 
 //const mongoUrl =
 // "mongodb://statusreport:statusreport123@ds133547.mlab.com:33547/statusreport";
-const mongoUrl = "mongodb://archersecho.com:27017/statusReport";
+const mongoUrl = "mongodb://archersecho.com:27017/ArchersEcho";
 // const mongoUrl = "mongodb://18.224.4.211:27017/ArchersEcho";
 // Connect to the database
 mongoose.connect(mongoUrl, { useNewUrlParser: true });

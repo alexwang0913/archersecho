@@ -4,5 +4,6 @@ export default {
   filter: {
     keyword: "",
     category: 0
-  }
+  },
+  processList: []
 };

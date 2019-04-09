@@ -37,7 +37,6 @@
             />
           </div>
 
-          <!-- TODO LIST -->
           <VuePerfectScrollbar
             class="todo-content-scroll-area"
             :settings="settings"
@@ -54,7 +53,6 @@
               </li>
             </transition-group>
           </VuePerfectScrollbar>
-          <!-- /TODO LIST -->
         </div>
       </div>
     </div>
@@ -91,7 +89,8 @@ export default {
         { text: "Blade Runner", value: 2 },
         { text: "Thor Ragnarok", value: 3 }
       ],
-      filterDevices: []
+      filterDevices: [],
+      timer: null
     };
   },
   computed: {
@@ -101,6 +100,9 @@ export default {
   },
   mounted() {
     this.$store.dispatch("device/getDevicesByArcherId", this.archerId);
+    this.timer = setInterval(() => {
+      this.$store.dispatch("device/getDevicesByArcherId", this.archerId);
+    }, 1000);
   },
   methods: {
     setSidebarWidth() {
@@ -123,6 +125,9 @@ export default {
       window.addEventListener("resize", this.handleWindowResize);
     });
     this.setSidebarWidth();
+  },
+  beforeDestroy() {
+    clearTimeout(this.timer);
   }
 };
 </script>

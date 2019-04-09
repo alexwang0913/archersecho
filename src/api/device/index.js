@@ -34,16 +34,15 @@ const addProcess = async data => {
   return response.data;
 };
 
-const getProcessList = async data => {
+const getProcessList = async deviceId => {
   const response = await client({
-    method: "POST",
-    url: "/api/device/processList",
-    data
+    method: "GET",
+    url: `/api/device/getProcess/${deviceId}`
   });
   return response.data;
 };
 
-const delteProceses = async data => {
+const deleteProcess = async data => {
   const response = await client({
     method: "DELETE",
     url: "/api/device/process",
@@ -244,7 +243,7 @@ export default {
   getDeviceInfo,
   addProcess,
   getProcessList,
-  delteProceses,
+  deleteProcess,
   deleteDevice,
   update,
   updateProcessStatus,

@@ -181,8 +181,7 @@ export default {
         text: "Success in upload profile image"
       });
 
-      const { url } = JSON.parse(response.srcElement.response);
-      this.user.profileUrl = url;
+      this.user.profileUrl = response.srcElement.response;
     },
     failUpload(error) {
       console.log(error);

@@ -47,27 +47,26 @@ export default {
   },
   methods: {
     submit() {
-      console.log("asdfasdf");
       this.$validator.validateAll().then(result => {
         if (result) this.addProcess();
       });
     },
     clearFields() {
       this.name = "";
-      this.desc = "";
     },
     async addProcess() {
       const data = {
         deviceId: this.deviceId,
         name: this.name
       };
-      console.log(data);
       await deviceApi.addProcess(data);
       this.$vs.notify({
         type: "success",
         title: "Success",
         text: "Success in add process"
       });
+      this.$store.dispatch("device/getProcessList", this.deviceId);
+      this.name = "";
     }
   }
 };

@@ -7,5 +7,8 @@ export default {
   },
   SET_FILTER_CATEGORY(state, category) {
     state.filter.category = category;
+  },
+  SET_PROCESS_LIST(state, processList) {
+    state.processList = processList;
   }
 };

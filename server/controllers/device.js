@@ -99,7 +99,6 @@ exports.info = async (req, res) => {
         iisLogs: device.iisLogs,
         type: device.type,
         name: device.name,
-        process: device.process,
         archerId: device.archerId,
         network: device.network,
         drives: device.drives,
@@ -191,18 +190,6 @@ exports.addProcess = (req, res) => {
     });
 };
 
-exports.processList = (req, res) => {
-  const { deviceId } = req.body;
-  Device.findById(deviceId)
-    .then(device => {
-      const processList = device.process;
-      res.send({ status: 200, data: processList });
-    })
-    .catch(err => {
-      res.send({ status: 500, err: err });
-    });
-};
-
 exports.deleteProcess = (req, res) => {
   const { deviceId, processId } = req.body;
   Device.findByIdAndUpdate(deviceId, {
@@ -253,175 +240,60 @@ exports.update = async (req, res) => {
   uptimeController.update(deviceId);
 
   let process = [];
-  // check portentialSupport
-  try {
-    PortentialSupport.find({})
-      .then(supportList => {
-        // console.log('______SupportList')
-        // console.log(supportList)
-        Promise.all(
-          supportList.map(async support => {
-            // console.log('_______Suppport: ___')
-            // console.log(support)
-            let supportTime = null;
-            if (support.machineType === 1) {
-              if (support.compareType === 1) {
-                if (support.amount > data.Cpu.Usage) {
-                  supportTime = new Date();
-                }
-              } else if (support.compareType === 2) {
-                if (support.amount < data.Cpu.Usage) {
-                  supportTime = new Date();
-                }
-              }
-            } else if (support.machineType === 2) {
-              if (support.compareType === 1) {
-                if (support.amount > data.Memory.Available) {
-                  supportTime = new Date();
-                }
-              } else if (support.compareType === 2) {
-                if (support.amount < data.Memory.Available) {
-                  supportTime = new Date();
-                }
-              }
-            }
+  let updateDeviceInfo = {
+    cpu: data.Cpu,
+    memory: {
+      Usage: data.Memory.Usage,
+      Available: (data.Memory.Available / data.Memory.Total) * 100
+    },
+    network: data.Network,
+    updateTime: new Date(),
+    drives: data.Drives,
+    status: 0
+  };
 
-            let updateDeviceInfo = {
-              cpu: data.Cpu,
-              memory: {
-                Usage: data.Memory.Usage,
-                Available: (data.Memory.Available / data.Memory.Total) * 100
-              },
-              network: data.Network,
-              updateTime: new Date(),
-              drives: data.Drives
-              // errorList: errorList
-              // errorList: data.Errors
-            };
-            if (supportTime) {
-              updateDeviceInfo["supportTime"] = supportTime;
-              updateDeviceInfo["supportMessage"] = "";
-              updateDeviceInfo["status"] = 0;
-            }
-
-            /**
-             * Save Errors in to .xml file
-             */
-            // if (data.Errors.length > 0) {
-            //   var xmlDoc = builder.create('errors')
-            //   data.Errors.forEach((error, idx) => {
-            //     xmlDoc.com(`error${idx + 1}`)
-
-            //     const item = xmlDoc.ele(`error${idx + 1}`)
-            //     item.att('EventID', error.EventID)
-            //     item.att('Type', error.Type)
-            //     item.att('SubType', error.SubType)
-            //     item.att('Level', error.Level)
-            //     item.att('TimeCreated', error.TimeCreated)
-            //     item.att('Source', error.Source)
-            //     item.att('Correlation', error.Correlation)
-            //     item.att('Execution', error.Execution)
-            //   })
-
-            //   const now = new Date()
-            //   const fileName = `error_${now.getTime()}.xml`
-            //   // const filePath = __dirname + `../../../uploads/errors/${fileName}`
-            //   const filePath = `/home/archersecho/uploads/errors/${fileName}`
-
-            //   fs.writeFile(filePath, xmlDoc, err => {
-            //     if (err) {
-            //       return console.log(err)
-            //     }
-
-            //     const errorLogInfo = {
-            //       fileName: fileName,
-            //       timeCreated: new Date(),
-            //       timeUpdated: new Date()
-            //     }
-
-            //     Device.findByIdAndUpdate(deviceId, {
-            //       $push: {
-            //         errorLog: errorLogInfo
-            //       }
-            //     })
-            //       .then(device => {
-            //         console.log('success in insert errorLogInfo')
-            //       })
-            //       .catch(err => {
-            //         console.log(err)
-            //       })
-            //   })
-            // }
-
-            const updateProcessInfo = data.Process;
-            Device.findByIdAndUpdate(deviceId, {
-              $set: updateDeviceInfo
-            })
-              .then(device => {
-                // console.log('___Updated')
-                const currentTime = new Date().getTime();
-                const supportTime = new Date(device.supportTime).getTime();
-                const diff = Math.floor(
-                  (currentTime - supportTime) / (1000 * 60 * 60)
-                );
-                let supportMsg = "";
-                if (diff >= support.time) {
-                  supportMsg = support.recommendation;
-                }
-                Device.findByIdAndUpdate(deviceId, {
-                  $set: { supportMessage: supportMsg }
-                });
-
-                // process = device.process
-                device.process.map(p => {
-                  if (p.isActive) {
-                    process.push(p);
-                  }
-                });
-                Promise.all(
-                  updateProcessInfo.map(process => {
-                    Device.update(
-                      {
-                        "process._id": process._id
-                      },
-                      {
-                        $set: {
-                          "process.$.Status": process.Status,
-                          "process.$.updateAt": new Date()
-                        }
-                      }
-                    )
-                      .then(device => {
-                        return device;
-                      })
-                      .catch(err => {
-                        return err;
-                      });
-                  })
-                )
-                  .then(result => {
-                    res.send({ status: 200, data: process });
-                  })
-                  .catch(err => {
-                    return err;
-                  });
-              })
-              .catch(err => {
-                return err;
-              });
-          })
-        );
-      })
-      .then(result => {
-        // res.send({ status: 200, data: process })
-      })
-      .catch(err => {
-        res.send({ status: 500, err: err });
+  const updateProcessInfo = data.Process;
+  Device.findByIdAndUpdate(deviceId, {
+    $set: updateDeviceInfo
+  })
+    .then(device => {
+      // process = device.process
+      device.process.map(p => {
+        if (p.isActive) {
+          process.push(p);
+        }
       });
-  } catch (err) {
-    console.log("____Device update error");
-    console.log(err);
-  }
+      Promise.all(
+        updateProcessInfo.map(process => {
+          Device.update(
+            {
+              "process._id": process._id
+            },
+            {
+              $set: {
+                "process.$.Status": process.Status,
+                "process.$.updateAt": new Date()
+              }
+            }
+          )
+            .then(device => {
+              return device;
+            })
+            .catch(err => {
+              return err;
+            });
+        })
+      )
+        .then(result => {
+          res.send({ status: 200, data: process });
+        })
+        .catch(err => {
+          return err;
+        });
+    })
+    .catch(err => {
+      return err;
+    });
 };
 
 exports.setActiveProcess = (data, cb) => {
@@ -748,6 +620,9 @@ exports.getByArcherId = (req, res) => {
   const { archerId } = req.params;
   Device.find({ archerId: archerId })
     .then(devices => {
+      devices.map(device => {
+        if (!device.socketId) device.status = 1;
+      });
       res.status(200).json(devices);
     })
     .catch(err => {
@@ -1113,8 +988,17 @@ exports.getUptime = (deviceId, cb) => {
   Device.find({ _id: deviceId }, { "cpu.Uptime": 1 }, cb);
 };
 
-exports.getProcessList = (deviceId, cb) => {
-  Device.findOne({ _id: deviceId }, { process: 1 }, cb);
+// exports.getProcessList = (deviceId, cb) => {
+//   Device.findOne({ _id: deviceId }, { process: 1 }, cb);
+// };
+exports.getProcessList = (req, res) => {
+  Device.findOne({ _id: req.params.deviceId }, { process: 1 })
+    .then(device => {
+      res.json(device);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
 };
 
 exports.getDeviceListByArcherId = (archerId, cb) => {

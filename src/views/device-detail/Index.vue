@@ -8,7 +8,7 @@
     <detail :data="detail"></detail>
     <driver-information :drives="drives"></driver-information>
     <network-status :networks="networks"></network-status>
-    <process-information :process="process" :id="id"></process-information>
+    <process-information :id="id"></process-information>
     <vulnerability></vulnerability>
     <windows-event-log :id="id"></windows-event-log>
   </div>
@@ -45,7 +45,6 @@ export default {
       detail: {},
       drives: [],
       networks: [],
-      process: [],
 
       timer: null
     };
@@ -73,7 +72,7 @@ export default {
       };
       this.drives = data.drives;
       this.networks = data.network;
-      this.process = data.process;
+
       this.$vs.loading.close("#div-device > .con-vs-loading");
       // console.log(data);
     }

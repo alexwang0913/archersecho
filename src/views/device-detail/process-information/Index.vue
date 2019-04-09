@@ -14,7 +14,9 @@
         <vs-tr :key="indextr" v-for="(tr, indextr) in process">
           <vs-td>{{ tr.Name }}</vs-td>
 
-          <vs-td>{{ tr.Status }}</vs-td>
+          <vs-td>
+            <vs-chip :color="getStatusColor(tr.Status)">{{ tr.Status ? "On" : "Off" }}</vs-chip>
+          </vs-td>
 
           <vs-td>{{ getUpdateAt(tr.updateAt) }}</vs-td>
           <vs-td>
@@ -22,29 +24,94 @@
           </vs-td>
           <vs-td>
             <div class="vx-row">
-              <vs-button color="primary" type="border" icon="edit" radius size="small" class="mr-2"></vs-button>
-              <vs-button color="danger" type="border" icon="delete" radius size="small"></vs-button>
+              <vs-button
+                color="primary"
+                type="border"
+                icon="edit"
+                radius
+                size="small"
+                class="mr-2"
+                @click="showPrompt(indextr)"
+              ></vs-button>
+              <vs-button
+                color="danger"
+                type="border"
+                icon="delete"
+                radius
+                size="small"
+                @click="openConfirmDialog(tr._id)"
+              ></vs-button>
             </div>
           </vs-td>
         </vs-tr>
       </template>
     </vs-table>
+    <edit-process
+      :displayPrompt="displayPrompt"
+      :processItemId="processIdToEdit"
+      :deviceId="id"
+      @hideDisplayPrompt="hidePrompt"
+      v-if="displayPrompt"
+    ></edit-process>
   </vx-card>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import AddProcess from "./AddProcess.vue";
+import EditProcess from "./EditProcess.vue";
+import deviceApi from "../../../api/device";
+
 export default {
-  props: ["process", "id"],
+  props: ["id"],
   components: {
-    AddProcess
+    AddProcess,
+    EditProcess
+  },
+  computed: {
+    ...mapState({
+      process: state => state.device.processList
+    })
+  },
+  data() {
+    return {
+      displayPrompt: false,
+      processIdToEdit: 0,
+      selectProcessId: null
+    };
   },
   mounted() {
-    console.log(this.process);
+    this.$store.dispatch("device/getProcessList", this.id);
   },
   methods: {
     getUpdateAt(value) {
       return value ? value.replace("T", " ").split(".")[0] : "--";
+    },
+    getStatusColor(status) {
+      return status ? "success" : "danger";
+    },
+    hidePrompt() {
+      this.displayPrompt = false;
+    },
+    showPrompt(index) {
+      this.processIdToEdit = index;
+      this.displayPrompt = true;
+    },
+    openConfirmDialog(id) {
+      this.selectProcessId = id;
+      this.$vs.dialog({
+        type: "confirm",
+        color: "danger",
+        title: `Confirm`,
+        text: "Are you sure delete this process?",
+        accept: this.deleteProcess
+      });
+    },
+    async deleteProcess() {
+      await deviceApi.deleteProcess({
+        deviceId: this.id,
+        processId: this.selectProcessId
+      });
     }
   }
 };
