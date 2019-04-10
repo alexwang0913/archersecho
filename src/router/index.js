@@ -66,6 +66,12 @@ const router = new Router({
           path: "/instance-detail/:database",
           name: "instance-detail",
           component: () => import("../views/instance-detail/Index.vue")
+        },
+        {
+          path: "/configuration-information/:id",
+          name: "configuration-information",
+          component: () =>
+            import("../views/configuration-information/Index.vue")
         }
       ],
       beforeEnter: authGuard

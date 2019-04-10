@@ -49,7 +49,7 @@ export default {
             name: "Instances"
           },
           {
-            url: "/configuration-information",
+            url: "/configuration-information/" + archer._id,
             name: "Configuration Information"
           },
           {
