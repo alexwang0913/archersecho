@@ -72,6 +72,11 @@ const router = new Router({
           name: "configuration-information",
           component: () =>
             import("../views/configuration-information/Index.vue")
+        },
+        {
+          path: "/error-logs/:id",
+          name: "error-logs",
+          component: () => import("../views/error-logs/Index.vue")
         }
       ],
       beforeEnter: authGuard

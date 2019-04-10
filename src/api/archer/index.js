@@ -44,7 +44,6 @@ const updateDbInfo = async (archerId, data) => {
 };
 
 const getErrorLogs = async archerId => {
-  console.log(archerId);
   const response = await client({
     method: "GET",
     url: `/api/archer/getErrorLogs/${archerId}`

@@ -339,13 +339,13 @@ exports.removeInstance = (req, res) => {
 };
 
 exports.addError = async (data, cb) => {
-  const { deviceId, url, name, hashCode, fileName } = data;
+  const { deviceId, name, hashCode, fileName } = data;
   const { archerId } = await Device.findById(deviceId);
   const archer = await Archer.findById(archerId);
 
   // Remove existing errorLogs
   Archer.update({ _id: archerId }, { $pull: { errorLogs: { name: name } } })
-    .then(result => {
+    .then(() => {
       /**
        * Verify errorLogs in the archer
        * There will be errorLogs last 5days and only 10 errors
@@ -356,7 +356,7 @@ exports.addError = async (data, cb) => {
       Archer.update(
         { _id: archerId },
         { $pull: { errorLogs: { createdAt: { $lte: fiveDaysAgo } } } }
-      ).then(result => {
+      ).then(() => {
         if (archer.errorLogs.length > 9) {
           const cnt = archer.errorLogs.length - 9;
           let errorLogIds = [];
@@ -366,17 +366,17 @@ exports.addError = async (data, cb) => {
           Archer.update(
             { _id: archerId },
             { $pull: { errorLogs: { _id: { $in: errorLogIds } } } }
-          ).then(result => {
+          ).then(() => {
             Archer.update(
               { _id: archerId },
               {
                 $push: {
                   errorLogs: {
-                    url: url,
                     name: name,
                     deviceId: deviceId,
                     hashCode: hashCode,
-                    fileName: fileName
+                    fileName: fileName,
+                    createdAt: new Date()
                   }
                 }
               }
@@ -394,7 +394,6 @@ exports.addError = async (data, cb) => {
             {
               $push: {
                 errorLogs: {
-                  url: url,
                   name: name,
                   deviceId: deviceId,
                   hashCode: hashCode,
@@ -413,7 +412,7 @@ exports.addError = async (data, cb) => {
       });
     })
     .catch(err => {
-      res.status(500).json(err);
+      cb(err, null);
     });
 };
 

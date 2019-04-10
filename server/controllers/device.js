@@ -564,7 +564,8 @@ exports.searchError = async (req, res) => {
   let index = 0;
   let result = [];
   for (const err of errorLogs) {
-    request.get(err.url, (error, response, body) => {
+    const url = `http://localhost:3000/${err.name}`;
+    request.get(url, (error, response, body) => {
       if (!error && response.statusCode == 200) {
         if (body.indexOf(keyword) > -1) {
           result.push(err);

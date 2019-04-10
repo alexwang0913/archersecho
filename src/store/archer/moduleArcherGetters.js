@@ -53,7 +53,7 @@ export default {
             name: "Configuration Information"
           },
           {
-            url: "/error-logs",
+            url: "/error-logs/" + archer._id,
             name: "Error Logs"
           },
           {
