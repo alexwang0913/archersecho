@@ -69,6 +69,8 @@ exports.info = async (req, res) => {
         status = 2;
       } else if (device.socketId) {
         status = 0;
+      } else if (!device.socketId) {
+        status = 1;
       } else {
         const now = new Date().getTime();
         const updatedAt = new Date(device.updatedAt).getTime();
@@ -234,6 +236,14 @@ exports.update = async (req, res) => {
   };
   cpuMemoryUtilizationController.add(cpu_memory_utils_data);
 
+  // Verify Process not running status
+  let processNotRunning = false;
+  for (const process of data.Process) {
+    if (!process.Status) {
+      processNotRunning = true;
+    }
+  }
+
   /**
    * Update service uptime
    */
@@ -249,7 +259,7 @@ exports.update = async (req, res) => {
     network: data.Network,
     updateTime: new Date(),
     drives: data.Drives,
-    status: 0
+    status: processNotRunning ? 3 : 0
   };
 
   const updateProcessInfo = data.Process;
@@ -296,17 +306,31 @@ exports.update = async (req, res) => {
     });
 };
 
-exports.setActiveProcess = (data, cb) => {
-  const { processId, status } = data;
+// exports.setActiveProcess = (data, cb) => {
+//   const { processId, status } = data;
+//   Device.update(
+//     { "process._id": processId },
+//     { $set: { "process.$.isActive": status } }
+//   )
+//     .then(device => {
+//       cb(null, device);
+//     })
+//     .catch(err => {
+//       cb(err);
+//     });
+// };
+
+exports.setActiveProcess = (req, res) => {
+  const { processId, status } = req.body;
   Device.update(
     { "process._id": processId },
     { $set: { "process.$.isActive": status } }
   )
     .then(device => {
-      cb(null, device);
+      res.json(device);
     })
     .catch(err => {
-      cb(err);
+      res.status(500).json(err);
     });
 };
 

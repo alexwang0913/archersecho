@@ -22,6 +22,12 @@
           @click="gotoDeviceDetail"
         ></feather-icon>
         <feather-icon
+          icon="EditIcon"
+          class="cursor-pointer"
+          svgClasses="w-5 h-5 mr-4"
+          @click="openEditPrompt(device)"
+        ></feather-icon>
+        <feather-icon
           icon="TrashIcon"
           class="cursor-pointer"
           svgClasses="w-5 h-5 mr-4"
@@ -101,6 +107,9 @@ export default {
     },
     statusLabel(status) {
       return getStatusLabel(status);
+    },
+    openEditPrompt(device) {
+      this.$emit("showEditPrompt", device);
     }
   }
 };

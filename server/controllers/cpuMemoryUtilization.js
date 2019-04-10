@@ -1,7 +1,7 @@
-const { CpuMemoryUtilization } = require('../database/models')
-const Promise = require('bluebird')
-const async = require('async')
-const mongoose = require('mongoose')
+const { CpuMemoryUtilization } = require("../database/models");
+const Promise = require("bluebird");
+const async = require("async");
+const mongoose = require("mongoose");
 
 exports.add = data => {
   new CpuMemoryUtilization(data)
@@ -10,9 +10,9 @@ exports.add = data => {
       // console.log(result)
     })
     .catch(err => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 
 // setInterval(() => {
 //   // This function calls every 30mins and do the following actions repeatly.
@@ -24,16 +24,16 @@ exports.add = data => {
 //     [
 //       {
 //         $group: {
-//           _id: '$deviceId',
-//           maxCpuUsage: { $max: '$cpuUsage' },
-//           maxMemoryAvailable: { $max: '$memoryAvailable' }
+//           _id: "$deviceId",
+//           maxCpuUsage: { $max: "$cpuUsage" },
+//           maxMemoryAvailable: { $max: "$memoryAvailable" }
 //         }
 //       }
 //     ],
 //     (err, results) => {
-//       if (err) throw err
+//       if (err) throw err;
 //       results.map(result => {
-//         const now = new Date()
+//         const now = new Date();
 //         CpuMemoryUtilization.remove(
 //           { deviceId: result._id },
 //           { createdAt: { $gte: new Date(now.getTime() - 1000 * 60 * 30) } },
@@ -44,57 +44,103 @@ exports.add = data => {
 //               deviceId: result._id,
 //               cpuUsage: result.cpuUsage,
 //               memoryAvailable: result.memoryAvailable
-//             }).save()
+//             }).save();
 //           })
 //           .catch(error => {
-//             console.log(error)
-//           })
-//       })
+//             console.log(error);
+//           });
+//       });
+//     }
+//   );
+// }, 1000);
+
+// exports.getUtilizationData = (deviceId, cb) => {
+//   const now = new Date()
+//   const last_day = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+
+//   CpuMemoryUtilization.aggregate(
+//     [
+//       {
+//         $group: {
+//           _id: {
+//             year: { $year: '$createdAt' },
+//             month: { $month: '$createdAt' },
+//             day: { $dayOfMonth: '$createdAt' },
+//             deviceId: '$deviceId'
+//           },
+//           cpuUsage: { $max: '$cpuUsage' },
+//           memoryAvailable: { $max: '$memoryAvailable' }
+//         }
+//       },
+//       {
+//         $match: {
+//           '_id.deviceId': mongoose.Types.ObjectId(deviceId),
+//           '_id.year': now.getFullYear(),
+//           '_id.moth': now.getMonth() + 1
+//         }
+//       }
+//     ],
+//     (err, result) => {
+//       if (err) {
+//         return cb(err)
+//       }
+//       let response = []
+//       for (let i = 1; i <= last_day; i++) {
+//         let d = []
+//         for (const data of result) {
+//           if (i === data.day) {
+//             d = data
+//           }
+//         }
+//         response.push(d)
+//       }
+//       cb(null, response)
 //     }
 //   )
-// }, 1000)
+// }
 
-exports.getUtilizationData = (deviceId, cb) => {
-  const now = new Date()
-  const last_day = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+exports.getUtilizationData = (req, res) => {
+  const { deviceId } = req.params;
+  const now = new Date();
+  const last_day = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
   CpuMemoryUtilization.aggregate(
     [
       {
         $group: {
           _id: {
-            year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' },
-            day: { $dayOfMonth: '$createdAt' },
-            deviceId: '$deviceId'
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+            deviceId: "$deviceId"
           },
-          cpuUsage: { $max: '$cpuUsage' },
-          memoryAvailable: { $max: '$memoryAvailable' }
+          cpuUsage: { $max: "$cpuUsage" },
+          memoryAvailable: { $max: "$memoryAvailable" }
         }
       },
       {
         $match: {
-          '_id.deviceId': mongoose.Types.ObjectId(deviceId),
-          '_id.year': now.getFullYear(),
-          '_id.moth': now.getMonth() + 1
+          "_id.deviceId": mongoose.Types.ObjectId(deviceId),
+          "_id.year": now.getFullYear(),
+          "_id.month": now.getMonth() + 1
         }
       }
     ],
     (err, result) => {
       if (err) {
-        return cb(err)
+        return res.status(500).json(err);
       }
-      let response = []
+      let response = [];
       for (let i = 1; i <= last_day; i++) {
-        let d = []
+        let d = [];
         for (const data of result) {
-          if (i === data.day) {
-            d = data
+          if (i === data._id.day) {
+            d = data;
           }
         }
-        response.push(d)
+        response.push(d);
       }
-      cb(null, response)
+      res.json(response);
     }
-  )
-}
+  );
+};

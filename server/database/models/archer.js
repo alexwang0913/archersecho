@@ -23,7 +23,8 @@ const definition = {
   instances: [
     {
       name: { type: String, default: "" },
-      database: { type: String, default: "" }
+      database: { type: String, default: "" },
+      description: { type: String, default: "" }
     }
   ],
   hashCode: { type: Number, default: -1 },

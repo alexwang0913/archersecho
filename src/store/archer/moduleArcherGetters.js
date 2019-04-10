@@ -45,7 +45,7 @@ export default {
             name: "Devices"
           },
           {
-            url: "/instance-management",
+            url: "/instance-management/" + archer._id,
             name: "Instances"
           },
           {

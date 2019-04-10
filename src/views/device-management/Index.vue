@@ -49,13 +49,19 @@
                 :key="device + index"
                 :style="[{transitionDelay: (index * 0.1) + 's'}]"
               >
-                <device-item :device="device" :archerId="archerId"></device-item>
+                <device-item :device="device" :archerId="archerId" @showEditPrompt="showEditDialog"></device-item>
               </li>
             </transition-group>
           </VuePerfectScrollbar>
         </div>
       </div>
     </div>
+    <device-edit
+      :displayPrompt="displayPrompt"
+      :device="deviceToEdit"
+      @hideEditPrompt="hideEditDialog"
+      v-if="displayPrompt"
+    ></device-edit>
   </div>
 </template>
 
@@ -65,13 +71,15 @@ import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import AddDevice from "./AddDevice.vue";
 import DeviceCategory from "./DeviceCategory.vue";
 import DeviceItem from "./DeviceItem.vue";
+import DeviceEdit from "./DeviceEdit.vue";
 
 export default {
   components: {
     AddDevice,
     VuePerfectScrollbar,
     DeviceCategory,
-    DeviceItem
+    DeviceItem,
+    DeviceEdit
   },
   data() {
     return {
@@ -90,7 +98,9 @@ export default {
         { text: "Thor Ragnarok", value: 3 }
       ],
       filterDevices: [],
-      timer: null
+      timer: null,
+      displayPrompt: false,
+      deviceToEdit: {}
     };
   },
   computed: {
@@ -102,7 +112,7 @@ export default {
     this.$store.dispatch("device/getDevicesByArcherId", this.archerId);
     this.timer = setInterval(() => {
       this.$store.dispatch("device/getDevicesByArcherId", this.archerId);
-    }, 1000);
+    }, 1000 * 10);
   },
   methods: {
     setSidebarWidth() {
@@ -118,6 +128,20 @@ export default {
     },
     onSearchDevice() {
       this.$store.commit("device/SET_FILTER_KEYWORD", this.searchQuery);
+    },
+    showEditDialog(deviceToEdit) {
+      console.log("Show edit dialog");
+      // console.log(deviceToEdit);
+      this.deviceToEdit = {
+        name: deviceToEdit.name,
+        type: deviceToEdit.type,
+        id: deviceToEdit._id,
+        archerId: this.archerId
+      };
+      this.displayPrompt = true;
+    },
+    hideEditDialog() {
+      this.displayPrompt = false;
     }
   },
   created() {
