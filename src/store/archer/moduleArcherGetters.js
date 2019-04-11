@@ -65,7 +65,7 @@ export default {
             name: "Support Ticket"
           },
           {
-            url: "/configuration-report",
+            url: "/configuration-report/" + archer._id,
             name: "Configuration Report"
           }
         ]
