@@ -61,7 +61,7 @@ export default {
             name: "Statistics"
           },
           {
-            url: "/support-ticket",
+            url: "/support-ticket/" + archer._id,
             name: "Support Ticket"
           },
           {

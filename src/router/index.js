@@ -82,6 +82,11 @@ const router = new Router({
           path: "/statistics/:id",
           name: "/statistics",
           component: () => import("../views/statistics/Index.vue")
+        },
+        {
+          path: "/support-ticket/:id",
+          name: "support-ticket",
+          component: () => import("../views/support-ticket/Index.vue")
         }
       ],
       beforeEnter: authGuard

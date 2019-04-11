@@ -1,10 +1,11 @@
-const express = require('express')
+const express = require("express");
 
-const { ticketController } = require('../controllers')
+const { ticketController } = require("../controllers");
 
-const router = express.Router()
+const router = express.Router();
 
-router.put('/:ticketId', ticketController.update)
-router.delete('/:ticketId', ticketController.delete)
+router.post("/", ticketController.add);
+router.put("/:ticketId", ticketController.update);
+router.delete("/:ticketId", ticketController.delete);
 
-module.exports = router
+module.exports = router;
