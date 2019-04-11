@@ -92,6 +92,16 @@ const router = new Router({
           path: "/configuration-report/:id",
           name: "configuration-report",
           component: () => import("../views/configuration-report/Index.vue")
+        },
+        {
+          path: "/team-management",
+          name: "team-management",
+          component: () => import("../views/team-management/Index.vue")
+        },
+        {
+          path: "/add-team",
+          name: "add-team",
+          component: () => import("../views/team-management/AddTeam.vue")
         }
       ],
       beforeEnter: authGuard
