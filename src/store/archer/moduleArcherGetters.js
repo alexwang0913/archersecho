@@ -57,7 +57,7 @@ export default {
             name: "Error Logs"
           },
           {
-            url: "/statistics",
+            url: "/statistics/" + archer._id,
             name: "Statistics"
           },
           {
