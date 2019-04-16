@@ -102,6 +102,16 @@ const router = new Router({
           path: "/add-team",
           name: "add-team",
           component: () => import("../views/team-management/AddTeam.vue")
+        },
+        {
+          path: "/helpdesk-ticket",
+          name: "helpdesk-ticket",
+          component: () => import("../views/helpdesk-ticket/Index.vue")
+        },
+        {
+          path: "/add-helpdesk-ticket",
+          name: "add-helpdesk-ticket",
+          component: () => import("../views/helpdesk-ticket/AddHelpDesk.vue")
         }
       ],
       beforeEnter: authGuard
