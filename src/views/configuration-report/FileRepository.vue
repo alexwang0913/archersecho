@@ -31,12 +31,15 @@ export default {
       userId: getFromStorage("user").id,
       resCount: 0,
       instances: [],
-      repositoryList: []
+      repositoryList: [],
+      arriveResponse: false,
+      timer: null
     };
   },
   mounted() {
     this.getRepositoryList();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     async getRepositoryList() {
@@ -82,11 +85,26 @@ export default {
         this.repositoryList.push(fileRepository);
 
         this.$vs.loading.close("#div-loading > .con-vs-loading");
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      this.timer = setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-loading > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {
     this.socket.disconnect();
+    clearTimeout(this.timer);
   }
 };
 </script>

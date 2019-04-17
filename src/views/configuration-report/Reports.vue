@@ -36,13 +36,16 @@ export default {
       userId: getFromStorage("user").id,
       resCount: 0,
       reports: [],
-      instances: []
+      instances: [],
+      arriveResponse: false,
+      timer: null
     };
   },
   mounted() {
     // console.log(this.archerId);
     this.getData();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     async getData() {
@@ -84,11 +87,26 @@ export default {
         if (++this.resCount === this.instances.length + 1) {
           this.$vs.loading.close("#div-reports > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-reports > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {
     this.socket.disconnect();
+    clearTimeout(this.timer);
   }
 };
 </script>

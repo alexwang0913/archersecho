@@ -2,7 +2,7 @@
   <div>
     <vs-card>
       <vs-row>
-        <vs-tabs vs-position="left">
+        <vs-tabs vs-position="left" id="sidebar">
           <vs-tab
             v-for="(tab, index) in tabs"
             :key="index"

@@ -146,12 +146,15 @@ export default {
         }
       },
 
-      resCount: 0
+      resCount: 0,
+      arriveResponse: false,
+      timer: null
     };
   },
   mounted() {
     this.getData();
     this.responseSocket();
+    this.checkResponse();
   },
   computed: {
     user() {
@@ -189,6 +192,7 @@ export default {
         if (++this.resCount === 6) {
           this.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_RUNNING_JOB_SUMMARY", response => {
         // console.log("response from RunningJobSummary");
@@ -198,6 +202,7 @@ export default {
         if (++this.resCount === 6) {
           this.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_AVAILABLE_JOB_SUMMARY", response => {
         // console.log("response from AvailableJobSummary");
@@ -216,6 +221,7 @@ export default {
         if (++this.resCount === 6) {
           this.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_ALL_JOB_SUMMARY", response => {
         // console.log("response from RES_ALL_JOB_SUMMARY");
@@ -235,6 +241,7 @@ export default {
         if (++this.resCount === 6) {
           this.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_JOB_COMPLETED", response => {
         // console.log("response from JobsComplted");
@@ -259,6 +266,7 @@ export default {
         if (++this.resCount === 6) {
           this.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_JOB_FAILED", response => {
         // console.log("response from JobsFailed");
@@ -283,7 +291,21 @@ export default {
         if (++this.resCount === 6) {
           this.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-jobengine-detail > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {

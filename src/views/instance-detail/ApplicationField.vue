@@ -101,7 +101,9 @@ export default {
       page: 1,
       keyword: "",
       resCount: 0,
-      pageLength: 1
+      pageLength: 1,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -128,6 +130,8 @@ export default {
       };
       this.socket.emit("REQ_APPLICATION_FIELD", data);
       this.socket.emit("REQ_APPLICATION_FIELD_COUNT", data);
+      this.arriveResponse = false;
+      this.checkResponse();
     },
     responseSocket() {
       this.socket.on("connect", () => {
@@ -136,28 +140,45 @@ export default {
       this.socket.on("RES_APPLICATION_FIELD", data => {
         console.log("response from RES_APPLICATION_FIELD");
         console.log(data);
+
         this.settings.data = data;
         this.resCount += 1;
         if (this.resCount === 2) {
           this.resCount = 0;
           this.$vs.loading.close("#div-application-field > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_APPLICATION_FIELD_COUNT", data => {
         console.log("response from RES_APPLICATION_FIELD_COUNT");
         console.log(data);
+
         this.pageLength = Math.ceil(data / 50);
         this.resCount += 1;
         if (this.resCount === 2) {
           this.resCount = 0;
           this.$vs.loading.close("#div-application-field > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
     },
     search(e) {
       if (e.keyCode === 13) {
         this.getApplicationField();
       }
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-application-field > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {

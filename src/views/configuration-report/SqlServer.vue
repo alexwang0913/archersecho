@@ -49,12 +49,15 @@ export default {
         rowHeaders: true
       },
 
-      resCount: 0
+      resCount: 0,
+      arriveResponse: false,
+      timer: null
     };
   },
   mounted() {
     this.getTopFieldHistories();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     async getTopFieldHistories() {
@@ -94,11 +97,26 @@ export default {
         });
 
         this.$vs.loading.close("#div-loading > .con-vs-loading");
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      this.timer = setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-loading > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {
     this.socket.disconnect();
+    clearTimeout(this.timer);
   }
 };
 </script>

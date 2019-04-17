@@ -154,7 +154,9 @@ export default {
       database: this.$route.params.database,
       count: 0,
       sentCount: 0,
-      failedCount: 0
+      failedCount: 0,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -165,6 +167,7 @@ export default {
   mounted() {
     this.getNotificationData();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getNotificationData() {
@@ -218,7 +221,21 @@ export default {
         this.count = data.length;
 
         this.$vs.loading.close("#div-notification-detail > .con-vs-loading");
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-notification-detail > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {

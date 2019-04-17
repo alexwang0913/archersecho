@@ -52,7 +52,9 @@ export default {
         }
       },
 
-      resCount: 0
+      resCount: 0,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -63,6 +65,7 @@ export default {
   mounted() {
     this.getData();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getData() {
@@ -106,6 +109,7 @@ export default {
         if (++this.resCount === 2) {
           this.$vs.loading.close("#div-contentinfo > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_CONTENT_UPDATED", response => {
         console.log("response from ContentUpdated");
@@ -130,7 +134,21 @@ export default {
         if (++this.resCount === 2) {
           this.$vs.loading.close("#div-contentinfo > .con-vs-loading");
         }
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-contentinfo > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   }
 };

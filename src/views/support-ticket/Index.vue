@@ -84,7 +84,9 @@ export default {
 
       resCount: 0,
       ticketInfo: {},
-      ticketIdToDelete: null
+      ticketIdToDelete: null,
+      arriveResponse: false,
+      timer: null
     };
   },
   mounted() {
@@ -106,6 +108,7 @@ export default {
         if (++this.resCount === 3) {
           this.generateMail();
         }
+        // this.arriveResponse = true;
       });
       this.socket.on("RES_SUPPORT_TICKET_PRODUCTION", response => {
         console.log("response from SupportTicketProduction");
@@ -114,6 +117,7 @@ export default {
         if (++this.resCount === 3) {
           this.generateMail();
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_SUPPORT_TICKET_VERSION", response => {
         console.log("response from SupportTicketVersion");
@@ -122,6 +126,7 @@ export default {
         if (++this.resCount === 3) {
           this.generateMail();
         }
+        this.arriveResponse = true;
       });
       this.socket.on("RES_GET_SUPPORT_TICKET_MAIL", mail => {
         this.ticketMessage = mail;
@@ -152,6 +157,7 @@ export default {
       this.socket.emit("REQ_SUPPORT_TICKET", data);
       this.socket.emit("REQ_SUPPORT_TICKET_PRODUCTION", data);
       this.socket.emit("REQ_SUPPORT_TICKET_VERSION", data);
+      this.checkResponse();
     },
     generateMail() {
       const link = window.location.origin + "/tempLogin";
@@ -220,6 +226,20 @@ Temporary Password: ${this.ticketInfo.password}
         title: "Success",
         text: "Sucess in delete ticket"
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-support-ticket > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+          vm.generateMail();
+        }
+      }, 1000 * 10);
     }
   }
 };

@@ -52,7 +52,9 @@ export default {
           { data: "MessageId", editor: false },
           { data: "SequentialId", editor: false }
         ]
-      }
+      },
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -63,6 +65,7 @@ export default {
   mounted() {
     this.getData();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getData() {
@@ -86,7 +89,21 @@ export default {
         console.log(response);
         this.settings.data = response;
         this.$vs.loading.close("#div-searchindex-queue > .con-vs-loading");
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-searchindex-queue > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   }
 };

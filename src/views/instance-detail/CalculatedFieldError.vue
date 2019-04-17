@@ -63,7 +63,9 @@ export default {
 
       moduleCount: 0,
       fieldCount: 0,
-      count: 0
+      count: 0,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -74,6 +76,7 @@ export default {
   mounted() {
     this.getCalculatedFieldError();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getCalculatedFieldError() {
@@ -113,7 +116,22 @@ export default {
         this.count = response.length;
 
         this.$vs.loading.close("#div-calculated-field > .con-vs-loading");
+
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-calculated-field > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   }
 };

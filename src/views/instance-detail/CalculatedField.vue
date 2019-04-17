@@ -160,7 +160,9 @@ export default {
       socket: io(SERVER_URL),
       database: this.$route.params.database,
       pageLength: 1,
-      page: 1
+      page: 1,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -172,6 +174,7 @@ export default {
     this.getCalculatedField();
     this.getCalculatedFieldsCount();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getCalculatedField() {
@@ -204,12 +207,27 @@ export default {
         console.log(data);
         this.settings.data = data;
         this.$vs.loading.close("#div-calculated-field > .con-vs-loading");
+        this.arriveResponse = true;
       });
       this.socket.on("RES_CALCULATED_FIELD_COUNT", count => {
         console.log("response from RES_CALCULATED_FIELD_COUNT");
         console.log(count);
         this.pageLength = Math.ceil(count / 50);
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-calculated-field > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {

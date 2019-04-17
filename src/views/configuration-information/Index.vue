@@ -35,7 +35,9 @@ export default {
       socket: io(SERVER_URL),
       archerId: this.$route.params.id,
 
-      confInfoList: []
+      confInfoList: [],
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -46,6 +48,7 @@ export default {
   mounted() {
     this.getConfigInfoList();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getConfigInfoList() {
@@ -71,7 +74,23 @@ export default {
         this.$vs.loading.close(
           "#div-configuration-information > .con-vs-loading"
         );
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close(
+            "#div-configuration-information > .con-vs-loading"
+          );
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   }
 };

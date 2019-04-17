@@ -31,7 +31,9 @@ export default {
         }
       },
       socket: io(SERVER_URL),
-      database: this.$route.params.database
+      database: this.$route.params.database,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -42,6 +44,7 @@ export default {
   mounted() {
     this.getLoginHeatmap();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     generateDataHeatMap(count, yrange) {
@@ -98,7 +101,21 @@ export default {
           });
         }
         this.$vs.loading.close("#div-login-heatmap > .con-vs-loading");
+        this.arriveResponse = true;
       });
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-login-heatmap > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {

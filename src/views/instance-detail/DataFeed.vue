@@ -35,7 +35,9 @@ export default {
     return {
       dataFeeds: [],
       socket: io(SERVER_URL),
-      database: this.$route.params.database
+      database: this.$route.params.database,
+      arriveResponse: false,
+      timer: null
     };
   },
   computed: {
@@ -46,6 +48,7 @@ export default {
   mounted() {
     this.getDataFeeds();
     this.responseSocket();
+    this.checkResponse();
   },
   methods: {
     getDataFeeds() {
@@ -59,6 +62,7 @@ export default {
         instance: this.database
       };
       this.socket.emit("REQ_DATA_FEED", data);
+      this.checkResponse();
     },
     responseSocket() {
       this.socket.on("connect", () => {
@@ -67,6 +71,7 @@ export default {
       this.socket.on("RES_DATA_FEED", data => {
         this.dataFeeds = data;
         this.$vs.loading.close("#div-data-feed > .con-vs-loading");
+        this.arriveResponse = true;
       });
     },
     getStatusLabel(status) {
@@ -86,6 +91,19 @@ export default {
         return "Pending";
       }
       return "N/A";
+    },
+    checkResponse() {
+      const vm = this;
+      setTimeout(() => {
+        if (!vm.arriveResponse) {
+          vm.$vs.loading.close("#div-data-feed > .con-vs-loading");
+          vm.$vs.notify({
+            color: "warning",
+            title: "Warning",
+            text: "No response from server."
+          });
+        }
+      }, 1000 * 10);
     }
   },
   beforeDestroy() {
