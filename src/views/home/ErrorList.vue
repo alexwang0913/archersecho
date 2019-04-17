@@ -3,8 +3,12 @@
     <div class="vx-col w-full mb-base">
       <vx-card title="List of Errors in last 24 hours">
         <vs-list>
-          <vs-list-item title="Error1" subtitle="Created at: 2019/04/01"></vs-list-item>
-          <vs-list-item title="Error2" subtitle="Created at: 2019/04/02"></vs-list-item>
+          <vs-list-item
+            v-for="(error, index) in errorList"
+            :key="index"
+            :title="error.name"
+            :subtitle="getErrorTime(error.createdAt)"
+          ></vs-list-item>
         </vs-list>
       </vx-card>
     </div>
@@ -31,7 +35,9 @@ export default {
   methods: {
     async getErrorList() {
       this.errorList = await api.getErrorListLast24hours(this.localUser.id);
-      console.log(this.errorList);
+    },
+    getErrorTime(time) {
+      return `Created At: ${time.replace("T", " ").split(".")[0]}`;
     }
   }
 };

@@ -59,6 +59,13 @@ if (user) {
 import VeeValidate from "vee-validate";
 Vue.use(VeeValidate);
 
+// import jQuery from "jquery";
+
+// window.jQuery = jQuery;
+// window.$ = jQuery;
+import "expose-loader?$!expose-loader?jQuery!jquery";
+import "./lib/VuelyScript";
+
 Vue.config.productionTip = false;
 
 new Vue({

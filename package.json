@@ -23,7 +23,9 @@
     "googleapis": "^39.1.0",
     "handsontable": "^7.0.2",
     "iplocation": "^6.1.0",
+    "jquery": "^3.4.0",
     "jsontoxml": "^1.0.1",
+    "jvectormap": "^2.0.4",
     "material-icons": "^0.3.0",
     "mongoose": "^5.4.20",
     "mssql": "^5.0.5",
@@ -62,6 +64,7 @@
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-service": "^3.6.0",
+    "expose-loader": "^0.7.5",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "2.5.19"

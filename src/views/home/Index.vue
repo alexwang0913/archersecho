@@ -14,11 +14,7 @@
       </vx-card>
     </div>
 
-    <div class="vx-col w-full mb-base">
-      <vx-card title="IP Geolocation map">
-        <div id="world-map" style="width: 100%; height: 500px"></div>
-      </vx-card>
-    </div>
+    <geolocation-map></geolocation-map>
   </div>
 </template>
 
@@ -29,6 +25,7 @@ import VueApexCharts from "vue-apexcharts";
 /** Local components */
 import Statistics from "./Statistics";
 import ErrorList from "./ErrorList";
+import GeolocationMap from "./GeolocationMap";
 export default {
   data() {
     return {
@@ -133,7 +130,7 @@ export default {
           }
         ],
         chartOptions: {
-          colors: this.themeColors,
+          colors: ["#28C76F"],
           dataLabels: {
             enabled: false
           }
@@ -145,11 +142,10 @@ export default {
     ChangeTimeDurationDropdown,
     VueApexCharts,
     Statistics,
-    ErrorList
+    ErrorList,
+    GeolocationMap
   },
-  mounted() {
-    this.initMap();
-  },
+  mounted() {},
   methods: {
     generateDataHeatMap(count, yrange) {
       var i = 0;
@@ -167,35 +163,6 @@ export default {
         i++;
       }
       return series;
-    },
-    async initMap() {
-      this.mapLoading = true;
-      // const mapData = await deviceApi.getIisLogInfo(this.userId);
-      // console.log("Mapdata");
-      // console.log(mapData);
-      // $(function() {
-      //   $("#world-map").vectorMap({
-      //     map: "world_mill_en",
-      //     scaleColors: ["#C8EEFF", "#0071A4"],
-      //     normalizeFunction: "polynomial",
-      //     hoverOpacity: 0.7,
-      //     hoverColor: false,
-      //     markerStyle: {
-      //       initial: {
-      //         fill: "#FFB70F",
-      //         stroke: "#FFB70F"
-      //       }
-      //     },
-      //     regionStyle: {
-      //       initial: {
-      //         fill: "#5D92F4"
-      //       }
-      //     },
-      //     backgroundColor: "#fff",
-      //     markers: mapData
-      //   });
-      // });
-      // this.mapLoading = false;
     }
   }
 };
