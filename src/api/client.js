@@ -1,7 +1,7 @@
 import axios from "axios";
+import { SERVER_URL } from "../utils/constant";
 
-// axios.defaults.baseURL = "http://archersecho.com";
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = SERVER_URL;
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
