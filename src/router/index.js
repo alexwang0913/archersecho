@@ -122,6 +122,11 @@ const router = new Router({
           path: "/add-wizard",
           name: "add-wizard",
           component: () => import("../views/add-wizard/Index.vue")
+        },
+        {
+          path: "/profile",
+          name: "profile",
+          component: () => import("../views/profile/Index.vue")
         }
       ],
       beforeEnter: authGuard

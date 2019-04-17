@@ -10,7 +10,7 @@
 
 
 <template>
-  <div class="h-screen flex w-full bg-img">
+  <div class="h-screen flex w-full bg-img vs-con-loading__container" id="div-loading">
     <div class="vx-col sm:w-1/2 md:w-1/2 lg:w-3/4 xl:w-3/5 mx-auto self-center">
       <vx-card>
         <div slot="no-body" class="full-page-bg-color">
@@ -148,8 +148,15 @@ export default {
     },
     async onClickLogin() {
       if (!this.validateForm()) return;
+      this.$vs.loading({
+        container: "#div-loading",
+        scale: 0.6
+      });
       try {
         const { status, data, attemptCount } = await authApi.login(this.user);
+        console.log(status);
+        console.log(data);
+        this.$vs.loading.close("#div-loading > .con-vs-loading");
 
         if (status === 301) {
           this.loginFail = true;
@@ -163,7 +170,6 @@ export default {
             this.loginFail = true;
             this.failType = 3;
           } else {
-            this.$router.push({ name: "home" });
             saveToStorage("user", {
               name: data.name,
               userId: data.userId,
@@ -171,6 +177,7 @@ export default {
               id: data._id
             });
             this.$store.commit("auth/SET_AUTH_STATE", true);
+            this.$router.push({ name: "home" });
           }
         }
       } catch (err) {
