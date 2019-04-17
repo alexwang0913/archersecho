@@ -85,7 +85,7 @@
         <vs-spacer></vs-spacer>
 
         <!-- NOTIFICATIONS -->
-        <vs-dropdown vs-custom-content vs-trigger-click>
+        <!-- <vs-dropdown vs-custom-content vs-trigger-click>
           <feather-icon
             icon="BellIcon"
             class="cursor-pointer mx-6 mt-1"
@@ -128,7 +128,7 @@
               </ul>
             </VuePerfectScrollbar>
           </vs-dropdown-menu>
-        </vs-dropdown>
+        </vs-dropdown>-->
 
         <!-- SEARCHBAR -->
         <div
@@ -183,7 +183,7 @@
                   <feather-icon icon="UserIcon" svgClasses="w-4 h-4"></feather-icon>
                   <span class="ml-2">Profile</span>
                 </li>
-                <li
+                <!-- <li
                   class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
                   @click="$router.push('/apps/email')"
                 >
@@ -203,7 +203,7 @@
                 >
                   <feather-icon icon="MessageSquareIcon" svgClasses="w-4 h-4"></feather-icon>
                   <span class="ml-2">Chat</span>
-                </li>
+                </li>-->
                 <vs-divider class="m-1"></vs-divider>
                 <li
                   class="flex py-2 px-4 cursor-pointer hover:bg-primary hover:text-white"
