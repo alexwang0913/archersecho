@@ -112,6 +112,16 @@ const router = new Router({
           path: "/add-helpdesk-ticket",
           name: "add-helpdesk-ticket",
           component: () => import("../views/helpdesk-ticket/AddHelpDesk.vue")
+        },
+        {
+          path: "/helpdesk-ticket/detail/:id",
+          name: "helpdesk-ticket-detail",
+          component: () => import("../views/helpdesk-ticket/HelpDeskDetail.vue")
+        },
+        {
+          path: "/add-wizard",
+          name: "add-wizard",
+          component: () => import("../views/add-wizard/Index.vue")
         }
       ],
       beforeEnter: authGuard

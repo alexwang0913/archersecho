@@ -9,17 +9,17 @@ export default {
         icon: "HomeIcon"
       },
       {
-        url: "team-management",
+        url: "/team-management",
         name: "Team Management",
         icon: "UsersIcon"
       },
       {
-        url: "helpdesk-ticket",
+        url: "/helpdesk-ticket",
         name: "HelpDesk Ticket",
         icon: "Share2Icon"
       },
       {
-        url: "add-wizard",
+        url: "/add-wizard",
         name: "Add Wizard",
         icon: "PackageIcon"
       },
