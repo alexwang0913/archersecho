@@ -12,9 +12,8 @@ const definition = {
   },
   errorLogs: [
     {
-      url: { type: String, default: "" },
       name: { type: String, default: "" },
-      createdAt: { type: String, default: "" },
+      createdAt: { type: Date, default: Date.now() },
       deviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Device" },
       hashCode: { type: Number, default: -1 },
       fileName: { type: String, default: "" }
@@ -23,7 +22,8 @@ const definition = {
   instances: [
     {
       name: { type: String, default: "" },
-      database: { type: String, default: "" }
+      database: { type: String, default: "" },
+      description: { type: String, default: "" }
     }
   ],
   hashCode: { type: Number, default: -1 },

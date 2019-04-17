@@ -56,6 +56,72 @@ const router = new Router({
           path: "/device-detail/:id",
           name: "device-detail",
           component: () => import("../views/device-detail/Index.vue")
+        },
+        {
+          path: "/instance-management/:id",
+          name: "instance-management",
+          component: () => import("../views/instance-management/Index.vue")
+        },
+        {
+          path: "/instance-detail/:database",
+          name: "instance-detail",
+          component: () => import("../views/instance-detail/Index.vue")
+        },
+        {
+          path: "/configuration-information/:id",
+          name: "configuration-information",
+          component: () =>
+            import("../views/configuration-information/Index.vue")
+        },
+        {
+          path: "/error-logs/:id",
+          name: "error-logs",
+          component: () => import("../views/error-logs/Index.vue")
+        },
+        {
+          path: "/statistics/:id",
+          name: "/statistics",
+          component: () => import("../views/statistics/Index.vue")
+        },
+        {
+          path: "/support-ticket/:id",
+          name: "support-ticket",
+          component: () => import("../views/support-ticket/Index.vue")
+        },
+        {
+          path: "/configuration-report/:id",
+          name: "configuration-report",
+          component: () => import("../views/configuration-report/Index.vue")
+        },
+        {
+          path: "/team-management",
+          name: "team-management",
+          component: () => import("../views/team-management/Index.vue")
+        },
+        {
+          path: "/add-team",
+          name: "add-team",
+          component: () => import("../views/team-management/AddTeam.vue")
+        },
+        {
+          path: "/helpdesk-ticket",
+          name: "helpdesk-ticket",
+          component: () => import("../views/helpdesk-ticket/Index.vue")
+        },
+        {
+          path: "/add-helpdesk-ticket",
+          name: "add-helpdesk-ticket",
+          component: () => import("../views/helpdesk-ticket/AddHelpDesk.vue")
+        },
+        {
+          path: "/helpdesk-ticket/detail/:id",
+          name: "helpdesk-ticket-detail",
+          component: () => import("../views/helpdesk-ticket/HelpDeskDetail.vue")
+        },
+        {
+          path: "/add-wizard",
+          name: "add-wizard",
+          component: () => import("../views/add-wizard/Index.vue")
         }
       ],
       beforeEnter: authGuard

@@ -5,22 +5,37 @@ const express = require("express");
 const router = express.Router();
 const { archerController, deviceController } = require("../controllers");
 
-// const uploadPath = "/home/ubuntu/Desktop/archersecho/new_webpage/uploads";
-const uploadPath = "/root/archersecho/uploads";
+const uploadPath = "/home/ubuntu/Desktop/archersecho/new_webpage/uploads";
+// const uploadPath = "/root/archersecho/uploads";
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, file.fieldname + "-" + Date.now());
   }
 });
 var upload = multer({ storage: storage });
 
-router.post("/", upload.single("file"), (req, res, next) => {
+router.post("/", upload.single("file"), (req, res) => {
   console.log("File uploaded to: " + req.file.filename);
   res.send(req.file.filename);
+});
+
+router.post("/errorLog", upload.single("file"), (req, res) => {
+  const errorData = {
+    deviceId: req.body.deviceId,
+    name: req.file.filename,
+    hashCode: req.body.hashCode,
+    fileName: req.body.fileName
+  };
+  archerController.addError(errorData, err => {
+    if (err) {
+      return res.status(500).json("Failed");
+    }
+    res.status(200).json("Success");
+  });
 });
 
 // aws.config.update({

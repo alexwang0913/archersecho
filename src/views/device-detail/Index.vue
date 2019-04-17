@@ -1,10 +1,7 @@
 <template>
   <div id="div-device" class="vs-con-loading__container">
     <vs-button @click="$router.go(-1)" type="flat" icon="arrow_back">back</vs-button>
-    <div class="vx-row">
-      <cpu-utilization></cpu-utilization>
-      <memory-utilization></memory-utilization>
-    </div>
+    <cpu-memory-utilization :id="id"></cpu-memory-utilization>
     <detail :data="detail"></detail>
     <driver-information :drives="drives"></driver-information>
     <network-status :networks="networks"></network-status>
@@ -15,8 +12,7 @@
 </template>
 
 <script>
-import CpuUtilization from "./CpuUtilization.vue";
-import MemoryUtilization from "./MemoryUtilization.vue";
+import CpuMemoryUtilization from "./CpuMemoryUtilization.vue";
 import Detail from "./Detail.vue";
 import DriverInformation from "./DriverInformation.vue";
 import NetworkStatus from "./NetworkStatus.vue";
@@ -29,8 +25,7 @@ import { setInterval, clearTimeout } from "timers";
 
 export default {
   components: {
-    CpuUtilization,
-    MemoryUtilization,
+    CpuMemoryUtilization,
     Detail,
     DriverInformation,
     NetworkStatus,
@@ -53,7 +48,7 @@ export default {
     this.getInformation();
     this.timer = setInterval(() => {
       this.getInformation();
-    }, 1000 * 60 * 10);
+    }, 1000 * 10);
   },
   methods: {
     async getInformation() {

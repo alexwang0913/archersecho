@@ -20,7 +20,7 @@
 
           <vs-td>{{ getUpdateAt(tr.updateAt) }}</vs-td>
           <vs-td>
-            <vs-switch color="success" v-model="tr.isActive"/>
+            <vs-switch color="success" v-model="tr.isActive" @click="updateProcessStatus(tr)"/>
           </vs-td>
           <vs-td>
             <div class="vx-row">
@@ -77,11 +77,15 @@ export default {
     return {
       displayPrompt: false,
       processIdToEdit: 0,
-      selectProcessId: null
+      selectProcessId: null,
+      timer: null
     };
   },
   mounted() {
     this.$store.dispatch("device/getProcessList", this.id);
+    this.timer = setInterval(() => {
+      this.$store.dispatch("device/getProcessList", this.id);
+    }, 1000 * 10);
   },
   methods: {
     getUpdateAt(value) {
@@ -112,7 +116,29 @@ export default {
         deviceId: this.id,
         processId: this.selectProcessId
       });
+      this.$vs.notify({
+        type: "success",
+        title: "Success",
+        text: "Success in delete process"
+      });
+      this.$store.dispatch("device/getProcessList", this.id);
+    },
+    async updateProcessStatus(process) {
+      console.log(process);
+      await deviceApi.updateProcessStatus({
+        processId: process._id,
+        status: !process.isActive
+      });
+      this.$vs.notify({
+        type: "success",
+        title: "Success",
+        text: "Success in update process status"
+      });
+      this.$store.dispatch("device/getProcessList", this.id);
     }
+  },
+  beforeDestroy() {
+    clearTimeout(this.timer);
   }
 };
 </script>

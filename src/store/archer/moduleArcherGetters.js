@@ -9,17 +9,17 @@ export default {
         icon: "HomeIcon"
       },
       {
-        url: "team-management",
+        url: "/team-management",
         name: "Team Management",
         icon: "UsersIcon"
       },
       {
-        url: "helpdesk-ticket",
+        url: "/helpdesk-ticket",
         name: "HelpDesk Ticket",
         icon: "Share2Icon"
       },
       {
-        url: "add-wizard",
+        url: "/add-wizard",
         name: "Add Wizard",
         icon: "PackageIcon"
       },
@@ -45,27 +45,27 @@ export default {
             name: "Devices"
           },
           {
-            url: "/instance-management",
+            url: "/instance-management/" + archer._id,
             name: "Instances"
           },
           {
-            url: "/configuration-information",
+            url: "/configuration-information/" + archer._id,
             name: "Configuration Information"
           },
           {
-            url: "/error-logs",
+            url: "/error-logs/" + archer._id,
             name: "Error Logs"
           },
           {
-            url: "/statistics",
+            url: "/statistics/" + archer._id,
             name: "Statistics"
           },
           {
-            url: "/support-ticket",
+            url: "/support-ticket/" + archer._id,
             name: "Support Ticket"
           },
           {
-            url: "/configuration-report",
+            url: "/configuration-report/" + archer._id,
             name: "Configuration Report"
           }
         ]

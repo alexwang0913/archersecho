@@ -4,7 +4,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const path = require("path");
 const http = require("http");
 const socket = require("./sockets");
@@ -14,13 +13,6 @@ const socket = require("./sockets");
  * Create Express server.
  */
 const app = express();
-
-/**
- * Load environment letiables from .env file, where API keys and passwords are configured.
- */
-dotenv.load({
-  path: ".env"
-});
 
 // Use native ES6 Promises since mongoose's are deprecated.
 mongoose.Promise = global.Promise;
